@@ -1,20 +1,26 @@
-import React from 'react'
-import { useQuery } from "react-query";
-import { getUsers } from './usersApi';
+import React from "react"
+import { useUsersData } from "./usersApi";
 
 export default function Users() {
 
-    const { isLoading, isError, isSuccess, data, error } = useQuery(
-        ["users"],
-        getUsers
-    );
-      
+    const { isLoading, isError, isSuccess, data, error } = useUsersData() 
+     
+    if(isLoading) {
+        return (<div>Loading...</div>) 
+    }
+
+    if(isError) {
+        return (<div>Error</div>) 
+    }
+
     return (
+        data? 
+        (
         <>
-        {isLoading && (
-            <span>Loading</span>
-        )}
-        <div>users</div>
+            {data.map((user) => (
+                <div key={user.id}>{user.name}</div>
+            ))}
         </>
+        ) : null
     )
 }

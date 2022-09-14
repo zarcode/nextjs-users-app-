@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+      "paths": {
+        "@/*": ["*"],
+        "test-utils": ["helpers/tests/test-utils"],
+        "mocks-server": ["helpers/mocks/server"]
+      }
+    }
+  }
+  

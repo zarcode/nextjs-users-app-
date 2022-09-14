@@ -1,7 +1,7 @@
 import React from "react";
 import type { AppProps, AppInitialProps } from "next/app";
-import { QueryClient, QueryClientProvider, Hydrate, DehydratedState } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
+import { QueryClient, QueryClientProvider, Hydrate, DehydratedState } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import '../styles/globals.css'
 
 type CustomAppProps = AppProps & {
