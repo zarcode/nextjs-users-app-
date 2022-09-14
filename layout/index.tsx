@@ -1,10 +1,15 @@
 
+import { ReactNode } from "react"
 import Image from 'next/image'
 import Link from 'next/link'
 import styles from './Layout.module.css'
 import PageHead from "./page-head"
 
-export default function Layout({children}) {
+interface Props {
+    children?: ReactNode
+}
+
+export default function Layout({children}:Props) {
   return (
     <div className={styles.container}>
         <PageHead/>

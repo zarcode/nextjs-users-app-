@@ -4,7 +4,12 @@ import { QueryClient, QueryClientProvider, Hydrate, DehydratedState } from "reac
 import { ReactQueryDevtools } from "react-query/devtools";
 import '../styles/globals.css'
 
-function MyApp({ Component, pageProps }) {
+type CustomAppProps = AppProps & {
+  pageProps: {
+    dehydratedState?: DehydratedState
+  }
+}
+function MyApp({ Component, pageProps }: CustomAppProps) {
   const [queryClient] = React.useState(() => new QueryClient());
   return (
     // Provide the client to your App
