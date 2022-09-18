@@ -26,7 +26,7 @@ export default Home
 export const getStaticProps: GetStaticProps = async (context) => {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery(["users"], 
+  await queryClient.prefetchQuery(["users", FIRST_PAGE], 
     () => getUsers({ params: { page: FIRST_PAGE } })
   );  
 
