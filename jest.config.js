@@ -11,8 +11,7 @@ const customJestConfig = {
   moduleNameMapper: {
     "@/(.*)": "<rootDir>/$1",
 
-    "^test-utils$": "<rootDir>/helpers/tests/test-utils.tsx",
-    "^mocks-server$": "<rootDir>/helpers/mocks/server.ts",
+    "^test-setup$": "<rootDir>/test/setup.tsx",
       
     // Handle module aliases (this will be automatically configured for you soon)
     '^@/components/(.*)$': '<rootDir>/components/$1',

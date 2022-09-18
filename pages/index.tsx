@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Layout from '../layout'
 import Users from '../components/users/users'
 import { getUsers } from '../components/users/usersApi'
-import { dehydrate, QueryClient } from 'react-query';
+import { dehydrate, QueryClient } from "@tanstack/react-query"
 
 const Home:NextPage = () => {
   return (
@@ -27,7 +27,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery(["users"], 
-    getUsers
+    () => getUsers(1)
   );  
 
   return {

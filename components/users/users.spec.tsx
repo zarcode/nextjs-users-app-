@@ -1,12 +1,115 @@
-import { renderWithClient, render, createWrapper } from "test-utils"
+import { renderWithClient, render, createWrapper, screen } from "test-setup"
+import { setupServer } from 'msw/node'
 import { renderHook, waitFor } from '@testing-library/react'
-import { server } from "mocks-server"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import userEvent from '@testing-library/user-event'
 import { rest } from "msw"
-import { setupServer } from "msw/node"
 import Users from "./users"
 import { useUsersData } from "./usersApi"
+import React from "react"
 
+const users = [
+    {
+        "id": 3185,
+        "name": "Charuchandra Devar",
+        "email": "charuchandra_devar@macejkovic.com",
+        "gender": "male",
+        "status": "inactive"
+    },
+    {
+        "id": 3184,
+        "name": "Dhara Varma",
+        "email": "varma_dhara@macejkovic-koss.info",
+        "gender": "female",
+        "status": "active"
+    },
+    {
+        "id": 3183,
+        "name": "Sarada Kakkar",
+        "email": "kakkar_sarada@gerlach.net",
+        "gender": "male",
+        "status": "active"
+    },
+    {
+        "id": 3182,
+        "name": "Oormila Butt V",
+        "email": "oormila_v_butt@purdy-braun.com",
+        "gender": "female",
+        "status": "inactive"
+    },
+    {
+        "id": 3181,
+        "name": "Gatik Desai Ret.",
+        "email": "desai_gatik_ret@langworth.net",
+        "gender": "male",
+        "status": "active"
+    },
+    {
+        "id": 3180,
+        "name": "Dr. Deependra Bandopadhyay",
+        "email": "bandopadhyay_dr_deependra@marquardt-koelpin.org",
+        "gender": "male",
+        "status": "active"
+    },
+    {
+        "id": 3179,
+        "name": "Akroor Kakkar",
+        "email": "kakkar_akroor@rice-reichel.name",
+        "gender": "male",
+        "status": "inactive"
+    },
+    {
+        "id": 3178,
+        "name": "Kalyani Chaturvedi I",
+        "email": "chaturvedi_kalyani_i@goyette-lockman.info",
+        "gender": "female",
+        "status": "active"
+    },
+    {
+        "id": 3177,
+        "name": "Chidaatma Nair",
+        "email": "chidaatma_nair@douglas.io",
+        "gender": "male",
+        "status": "inactive"
+    },
+    {
+        "id": 3176,
+        "name": "Anilaabh Bhattathiri",
+        "email": "bhattathiri_anilaabh@kihn-rowe.biz",
+        "gender": "female",
+        "status": "active"
+    }
+]
+
+const totalPages = 2
+
+const getPage = (page: number, size: number) => {
+    let start = (page - 1) * size;
+    let end = start + size;
+  
+    return users.slice(start, end)
+};
+
+const server = setupServer(
+    rest.get(
+        '*/users',
+        (req, res, ctx) => {
+            let page = 1;
+            const pageParam = req.url.searchParams.get('page')
+            if(pageParam) {
+                page = Number.parseInt(pageParam);
+            }
+
+            let perPage = 5;
+
+            return res(
+                    ctx.set('x-pagination-page', page.toString()),
+                    ctx.set('x-pagination-pages', totalPages.toString()),
+                    ctx.status(200),
+                    ctx.json(getPage(page, perPage))
+                )
+            }
+        )
+  );
 
 // Establish API mocking before all tests.
 beforeAll(() => server.listen())
@@ -16,33 +119,23 @@ afterEach(() => server.resetHandlers())
 // Clean up after the tests are finished.
 afterAll(() => server.close())
 
+const setup = (jsx: React.ReactElement) => {
+    return {
+      user: userEvent.setup(),
+      ...renderWithClient(jsx),
+    }
+  } 
 
 describe("Users", () => {
     it('successful query hook', async () => {
-        server.use(rest.get(
-            '*/users',
-            (req, res, ctx) => {
-                return res(
-                    ctx.status(200),
-                    ctx.json(
-                        [
-                            {
-                                name: 'John Doe',
-                                id: 1
-                            }
-                        ]
-                    )
-                    )
-                }
-            ))
 
-        const { result } = renderHook(() => useUsersData(), {
+        const { result } = renderHook(() => useUsersData(1), {
             wrapper: createWrapper()
         })
 
         await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-        expect(result.current.data?.[0].name).toBe('John Doe')
+        expect(result.current.data.users[0].name).toBe('Charuchandra Devar')
     })
 
     it('failure query hook', async () => {
@@ -52,7 +145,7 @@ describe("Users", () => {
             })
         )
 
-        const { result } = renderHook(() => useUsersData(), {
+        const { result } = renderHook(() => useUsersData(1), {
             wrapper: createWrapper()
         })
 
@@ -61,29 +154,53 @@ describe("Users", () => {
         expect(result.current.error).toBeDefined()
     })
 
-    it('Should show users if they are fetched successfully', async () => {
-        server.use(rest.get(
-            '*/users',
-            (req, res, ctx) => {
-                return res(
-                    ctx.status(200),
-                    ctx.json(
-                        [
-                            {
-                                name: 'John Doe',
-                                id: 1
-                            }
-                        ]
-                    )
-                    )
-                }
-            ))
-            
-        const result = renderWithClient(<Users/>)
-        
-        expect(await result.findByText(/John Doe/i)).toBeInTheDocument();
+    it('shows users if they are fetched successfully', async () => {
+        setup(<Users/>)
+        expect(await screen.findByText('Sarada Kakkar')).toBeInTheDocument();
+        expect(await screen.findByText('kakkar_sarada@gerlach.net')).toBeInTheDocument();
+        const genderList = await screen.findAllByText('male');
+        expect(genderList.length).toBeGreaterThan(0)
     })
-    it('Should show users if they are fetched successfully', async () => {
+    it('displays next page link', async () => {
+        setup(<Users/>);
+        await screen.findByText('Sarada Kakkar');
+        expect(screen.queryByText('Next page')).toBeInTheDocument();
+    })
+    it('displays next page after clicking next', async () => {
+        const { user } = setup(<Users/>);
+        await screen.findByText('Sarada Kakkar');
+        expect(await screen.findByText('Current page: 1')).toBeInTheDocument();
+        await user.click(screen.queryByText('Next page'));
+        expect(await screen.findByText('Current page: 2')).toBeInTheDocument();
+        const userFromPage2 = await screen.findByText('Akroor Kakkar');
+        expect(userFromPage2).toBeInTheDocument(); 
+    })
+    it('the next page button is disabled at last page', async () => {
+        const { user } = setup(<Users/>);
+        await user.click(screen.queryByText('Next page'))
+        expect(screen.queryByText('Next page')).toBeDisabled();
+    })
+    it('the previous page button is disabled at first page', async () => {
+        const { user } = setup(<Users/>);
+        expect(screen.queryByText('Previous page')).toBeDisabled();
+    })
+    it('displays the previous page on clicking previous', async () => {
+        const { user } = setup(<Users/>);
+        await screen.findByText('Sarada Kakkar');
+        expect(await screen.findByText('Current page: 1')).toBeInTheDocument();
+        await user.click(screen.queryByText('Next page'));
+        expect(await screen.findByText('Current page: 2')).toBeInTheDocument();
+        const userFromPage2 = await screen.findByText('Akroor Kakkar');
+        expect(userFromPage2).toBeInTheDocument(); 
+        await user.click(screen.queryByText('Previous page'));
+        expect(await screen.findByText('Current page: 1')).toBeInTheDocument();
+        const userFromPage1 = await screen.findByText('Sarada Kakkar');
+        expect(userFromPage1).toBeInTheDocument();
+    })
+
+    it('shows users if they are failed to fetch', async () => {
+        setup(<Users/>)
+
         server.use(rest.get(
             '*/users',
             (req, res, ctx) => {
@@ -92,8 +209,7 @@ describe("Users", () => {
                     )
                 }
             ))
-        const result = renderWithClient(<Users/>)
         
-        expect(await result.findByText(/Error/i)).toBeInTheDocument();
+        expect(await screen.findByText(/Error/i)).toBeInTheDocument();
     })
 })
