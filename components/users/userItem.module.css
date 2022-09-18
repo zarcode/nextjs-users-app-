@@ -1,0 +1,16 @@
+.user-item {
+    display: flex;
+    align-items: center;
+}
+
+.user-item__meta {
+    flex: 3
+}
+
+.user-item__actions {
+    flex: 1
+}
+
+.user-item__actions button {
+    margin-left: 5px;
+}

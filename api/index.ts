@@ -2,7 +2,8 @@ import axios, { AxiosInstance } from "axios"
 import {ApiRequestConfig, WithAbortFn} from "./types"
 
 const axiosInstance = axios.create({
-    baseURL: 'https://gorest.co.in/public/'
+    baseURL: 'http://localhost:3000/api/'
+    // baseURL: 'https://gorest.co.in/public/v2/'
 });
 
 const withAbort = (fn: WithAbortFn) => {

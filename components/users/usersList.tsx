@@ -1,14 +1,13 @@
 import React, {useEffect} from "react"
-import {
-    useQueryClient
-} from "@tanstack/react-query"
-import { useUsersData, getUsers } from "./usersApi";
+import { useUsersData } from "./usersApi";
 import UserItem from "./userItem";
+import styles from './usersList.module.css'
+
+export const FIRST_PAGE = 1;
 
 export default function Users() {
-    const queryClient = useQueryClient()
-    const [page, setPage] = React.useState(1)
-    const { isLoading, isError, isSuccess, isPreviousData, data, error } = useUsersData(page) 
+    const [page, setPage] = React.useState(FIRST_PAGE)
+    const { isLoading, isError, isPreviousData, data, error } = useUsersData(page) 
      
     // Prefetch the next page!
     // useEffect(() => {
@@ -26,7 +25,7 @@ export default function Users() {
             ) : isError ? (
                 <div>Error: {error.message}</div>
             ) : (
-                <ul>
+                <ul className={styles["users-list"]}>
                     {data.users.map((user) => (
                         <UserItem key={user.id} user={user}/>
                     ))}
