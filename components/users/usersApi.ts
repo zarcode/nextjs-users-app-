@@ -71,8 +71,6 @@ export function useUserDelete(id: number) {
     })
 }
 
-export function useUserCreate(user: SubmitUser ) {    
-    return useMutation(
-        (e: React.MouseEvent<HTMLButtonElement>) => createUser(user)
-     );
+export function useUserCreate() {    
+    return useMutation(createUser);
 }

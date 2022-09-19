@@ -1,7 +1,7 @@
-import { renderWithClient, render, createWrapper, screen } from "test-setup"
+import { renderWithClient, createWrapper, screen } from "test-setup"
+import { setup } from "@/test/utils"
 import { setupServer } from 'msw/node'
 import { renderHook, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { rest, RestContext } from "msw"
 import Users, {FIRST_PAGE} from "./usersList"
 import { useUsersData } from "./usersApi"
@@ -119,14 +119,7 @@ afterEach(() => server.resetHandlers())
 // Clean up after the tests are finished.
 afterAll(() => server.close())
 
-const setup = (jsx: React.ReactElement) => {
-    return {
-      user: userEvent.setup(),
-      ...renderWithClient(jsx),
-    }
-  } 
-
-describe("Users", () => {
+describe("Users list", () => {
     describe("successfull requests", () => {
         it('successful query hook', async () => {
 
