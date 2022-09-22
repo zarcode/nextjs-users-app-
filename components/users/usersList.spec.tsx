@@ -1,3 +1,4 @@
+import { UserEvent } from "@testing-library/user-event"
 import { renderWithClient, createWrapper, screen } from "test-setup"
 import { setup } from "@/test/utils"
 import { setupServer } from 'msw/node'
@@ -120,7 +121,7 @@ afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 
 describe("Users list", () => {
-    describe("successfull requests", () => {
+    describe("tests users fetch hook", () => {
         it('successful query hook', async () => {
 
             const { result } = renderHook(() => useUsersData(FIRST_PAGE), {
@@ -147,25 +148,25 @@ describe("Users list", () => {
 
             expect(result.current.error).toBeDefined()
         })
+    })
+    describe("successfull requests", () => {
+        let user: any;
+        beforeEach(() => {
+            const { user: setupUser} = setup(<Users/>)
+            user = setupUser;
+        });
 
-        it('users should be prefetched on server', async () => {
-            setup(<Users/>)
-            expect(await screen.findByText('Loading...')).not.toBeInTheDocument();
-        })
         it('shows users if they are fetched successfully', async () => {
-            setup(<Users/>)
             expect(await screen.findByText('Sarada Kakkar')).toBeInTheDocument();
             expect(await screen.findByText('kakkar_sarada@gerlach.net')).toBeInTheDocument();
             const genderList = await screen.findAllByText('male');
             expect(genderList.length).toBeGreaterThan(0)
         })
         it('displays next page link', async () => {
-            setup(<Users/>);
             await screen.findByText('Sarada Kakkar');
             expect(screen.queryByText('Next page')).toBeInTheDocument();
         })
         it('displays next page after clicking next', async () => {
-            const { user } = setup(<Users/>);
             await screen.findByText('Sarada Kakkar');
             expect(await screen.findByText(`Current page: ${FIRST_PAGE}`)).toBeInTheDocument();
             await user.click(screen.queryByText('Next page'));
@@ -174,16 +175,13 @@ describe("Users list", () => {
             expect(userFromPage2).toBeInTheDocument(); 
         })
         it('the next page button is disabled at last page', async () => {
-            const { user } = setup(<Users/>);
             await user.click(screen.queryByText('Next page'))
             expect(screen.queryByText('Next page')).toBeDisabled();
         })
         it('the previous page button is disabled at first page', async () => {
-            const { user } = setup(<Users/>);
             expect(screen.queryByText('Previous page')).toBeDisabled();
         })
         it('displays the previous page on clicking previous', async () => {
-            const { user } = setup(<Users/>);
             await screen.findByText('Sarada Kakkar');
             expect(await screen.findByText(`Current page: ${FIRST_PAGE}`)).toBeInTheDocument();
             await user.click(screen.queryByText('Next page'));

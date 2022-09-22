@@ -1,16 +1,26 @@
 import React from 'react'
 import { User, useUserDelete } from './usersApi'
 import styles from './userItem.module.css'
-
+import { useQueryClient } from "@tanstack/react-query";
 interface UserItemProps {
     user: User
 }
 
 export default function UserItem({ user }: UserItemProps) {
     const deleteUserMutation = useUserDelete(user.id)
+    const queryClient = useQueryClient();
 
     const onDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
-        deleteUserMutation.mutate(e)
+        const confirmed = confirm("Are you sure you want to delete user?");
+        if (confirmed) {
+            deleteUserMutation.mutate(user.id,
+                {
+                    onSuccess: () => {
+                        queryClient.invalidateQueries(['users']);
+                    }
+                }
+            )
+        }
     }
 
     return (
@@ -26,7 +36,8 @@ export default function UserItem({ user }: UserItemProps) {
                 >Edit</button>
                 <button
                     onClick={onDelete}
-                >Delete</button>
+                    disabled={deleteUserMutation.isLoading ? true : false}
+                >{deleteUserMutation.isLoading? "Deleting" : "Delete" }</button>
             </div>
         </li>
     )

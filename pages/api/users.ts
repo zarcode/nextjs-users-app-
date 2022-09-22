@@ -85,17 +85,30 @@ const getPage = (page: number, size: number) => {
 
 export default function usersHandler(req: any, res: any) {
 
-  let page = 1;
-  const pageParam = req.query.page;
-  if(pageParam) {
-      page = Number.parseInt(pageParam);
-  }
+    const {
+        method,
+    } = req
 
-  let perPage = 5;
+    switch (method) {
+        case 'GET': {
+            let page = 1;
+            const pageParam = req.query.page;
+            if(pageParam) {
+                page = Number.parseInt(pageParam);
+            }
 
-    res.setHeader('x-pagination-page', page.toString())
-      .setHeader('x-pagination-pages', totalPages.toString())
-      
-    res.status(200)
-      .json(getPage(page, perPage))
+            let perPage = 5;
+
+                res.setHeader('x-pagination-page', page.toString())
+                .setHeader('x-pagination-pages', totalPages.toString())
+                
+                res.status(200)
+                .json(getPage(page, perPage))
+            break
+        }
+        case 'POST': {
+            res.status(200).json({ name: `User` })
+            break
+        }
+    }
 }

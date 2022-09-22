@@ -33,7 +33,7 @@ export interface User {
     gender: string
 }
 
-type SubmitUser = Omit<User, 'id'>
+export type SubmitUser = Omit<User, 'id'>
 
 export interface UsersResponse {
     users: User[],
@@ -54,21 +54,7 @@ type TMutateOptions = Pick<
 >
 
 export function useUserDelete(id: number) {
-    const queryClient = useQueryClient()
-    
-    const mutation = useMutation(
-        (e: React.MouseEvent<HTMLButtonElement>) => deleteUser(id)
-     );
-
-    return ({
-        ...mutation,
-        mutate: (e: React.MouseEvent<HTMLButtonElement>, options = {}) => mutation.mutate(e, {
-            onSuccess: () => {
-                queryClient.invalidateQueries(['users']);
-            },
-            ...options
-        }) 
-    })
+    return useMutation(deleteUser);
 }
 
 export function useUserCreate() {    

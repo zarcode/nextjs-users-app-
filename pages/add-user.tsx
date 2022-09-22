@@ -1,5 +1,6 @@
 import React from 'react';
 import type { NextPage } from 'next'
+import Link from 'next/link'
 import Layout from "../layout"
 import UserEditForm from "../components/users/userEditForm"
 
@@ -9,6 +10,7 @@ const AddUser: NextPage = () => {
           <h1>
             Add a new user
           </h1>
+          <Link href="/">{"< Back"}</Link>
           <UserEditForm/>
         </Layout>
     )
