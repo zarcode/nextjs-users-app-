@@ -24,7 +24,7 @@ export const createUser = (user: SubmitUser) => {
     return api.post(`users`, user)
 }
 
-export const deleteUser = (id: number) => api.delete(`user/${1}`)
+export const deleteUser = (id: number) => api.delete(`user/${id}`)
 
 export interface User {
     id: number,
