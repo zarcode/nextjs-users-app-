@@ -1,9 +1,9 @@
-import { useUserCreate, SubmitUser } from './usersApi';
+import { useUserCreate, SubmitUser, User } from './usersApi';
 import React, { useState } from 'react';
 import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from 'react-hook-form';
 
-const UserEditFrom = () => {
+const AddEdit = ({ user }: { user: User }) => {
 	const queryClient = useQueryClient();
 	const createUserMutation = useUserCreate();
 
@@ -12,7 +12,9 @@ const UserEditFrom = () => {
 		reset,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<SubmitUser>();
+	} = useForm<SubmitUser>({
+		defaultValues: !!user ? user : {}
+	});
 
 	const onSubmit = (form: SubmitUser) => {
 		createUserMutation.mutate(form, {
@@ -27,7 +29,7 @@ const UserEditFrom = () => {
 
 	return (
 		<>
-			{createUserMutation.isSuccess && (<div>User has been created successfully</div>)}
+			{createUserMutation.isSuccess && (<div>{!!user ? "User has been edited successfully" : "User has been created successfully"}</div>)}
 			{createUserMutation.isError && (<div>Error: {createUserMutationError.message}</div>)}
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div>
@@ -51,7 +53,7 @@ const UserEditFrom = () => {
 						aria-label="user email"
 						aria-errormessage="email-validation-error"
 						aria-invalid={errors.email ? "true" : "false"}
-						{...register("email", { 
+						{...register("email", {
 							required: "Email is Required",
 							pattern: {
 								value: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
@@ -93,4 +95,4 @@ const UserEditFrom = () => {
 	)
 }
 
-export default UserEditFrom
+export default AddEdit

@@ -1,4 +1,5 @@
 import React, {useEffect} from "react"
+import Link from 'next/link'
 import { useUsersData } from "./usersApi";
 import UserItem from "./userItem";
 import styles from './usersList.module.css'
@@ -20,6 +21,11 @@ export default function Users() {
 
     return (
         <>
+            <h1>
+            Users list
+            </h1>
+            <Link href="/users/add">Add user</Link>
+
             {isLoading ? (
                 <div>Loading...</div>
             ) : isError ? (

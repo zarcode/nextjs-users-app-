@@ -1,7 +1,7 @@
 import { renderWithClient, createWrapper, screen } from "test-setup"
 import { act } from 'react-dom/test-utils';
 import { setup, fireEvent } from "@/test/utils"
-import UserEditForm from "./userEditForm"
+import AddEdit from "./AddEdit"
 import { waitFor, within } from "../../test/setup"
 import { rest } from "msw"
 import { setupServer } from 'msw/node'
@@ -30,7 +30,7 @@ afterAll(() => server.close())
 describe("User form", () => {
     let user: any;
     beforeEach(() => {
-        const { user: setupUser } = setup(<UserEditForm />)
+        const { user: setupUser } = setup(<AddEdit />)
         user = setupUser;
     });
 

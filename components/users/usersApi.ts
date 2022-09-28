@@ -15,6 +15,11 @@ const hasMore = (headers: Headers) => {
     return false
 }
 
+export const getUser = async(id: number) => {
+    const {data} = await api.get(`user/${id}`)
+    return data
+}
+
 export const getUsers = async(config: AxiosRequestConfig) => {
     const {data, headers} = await api.get(`users`, config)
     return { users: data, hasMore: hasMore(headers as Headers) }
@@ -40,11 +45,26 @@ export interface UsersResponse {
     hasMore: boolean
 }
 
+export function useUserData(id: number) {
+    return useQuery<User, Error>(
+        ["user", id],
+        () => getUser(id),
+    );
+}
+
 export function useUsersData(page: number) {
+    const queryClient = useQueryClient()
     return useQuery<UsersResponse, Error>(
         ["users", page],
         ({ signal }) => getUsers({ signal, params: { page } }),
-        { keepPreviousData : true }
+        { 
+            keepPreviousData : true,
+            onSuccess: ({ users }:UsersResponse) => {
+                users.forEach(user => {
+                    queryClient.setQueryData(['user', user.id], user)
+                });
+            }
+        }
     );
 }
 

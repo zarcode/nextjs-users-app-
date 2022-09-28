@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 import { User, useUserDelete } from './usersApi'
 import styles from './userItem.module.css'
 import { useQueryClient } from "@tanstack/react-query";
@@ -46,9 +47,7 @@ export default function UserItem({ user }: UserItemProps) {
                     <p>{user.gender}</p>
                 </div>
                 <div className={styles["user-item__actions"]}>
-                    <button
-                        onClick={() => { }}
-                    >Edit</button>
+                    <Link href={`/users/edit/${user.id}`}>Edit</Link>
                     <button
                         onClick={onDelete}
                         disabled={deleteUserMutation.isLoading ? true : false}
