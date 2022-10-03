@@ -1,4 +1,5 @@
 import React, {useEffect} from "react"
+import classNames from "classnames";
 import Link from 'next/link'
 import { useUsersData } from "./usersApi";
 import UserItem from "./userItem";
@@ -21,35 +22,43 @@ export default function Users() {
 
     return (
         <>
-            <h1>
-            Users list
-            </h1>
-            <Link href="/users/add">Add user</Link>
+            <header className={classNames("header", "center-horizontally")}>
+                <h1>
+                Users list
+                </h1>
+                <Link href="/users/add">Add user</Link>
+            </header>
 
+            <div className={styles["users-list"]}>
             {isLoading ? (
                 <div>Loading...</div>
             ) : isError ? (
                 <div>Error: {error.message}</div>
             ) : (
-                <ul className={styles["users-list"]}>
+                <ul>
                     {data.users.map((user) => (
                         <UserItem key={user.id} user={user}/>
                     ))}
                 </ul>
             )}
-            <p>Current page: {page}</p>
-            <button
-                onClick={() => setPage(p => Math.max(1, p - 1))}
-                disabled={page === 1}
-            >Previous page</button>
-            <button
-                onClick={() => {
-                    if (!isPreviousData && data?.hasMore) {
-                        setPage(p => p + 1)
-                    }
-                }}
-                disabled={isPreviousData || !data?.hasMore}
-            >Next page</button>
+            <div className={styles["users-list__pagination"]}>
+                <p>Current page: {page}</p>
+                <button
+                    className={styles["users-list__pagination-button"]}
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                >Previous page</button>
+                <button
+                    className={styles["users-list__pagination-button"]}
+                    onClick={() => {
+                        if (!isPreviousData && data?.hasMore) {
+                            setPage(p => p + 1)
+                        }
+                    }}
+                    disabled={isPreviousData || !data?.hasMore}
+                >Next page</button>
+                </div>
+            </div>
         </>
     )
 }

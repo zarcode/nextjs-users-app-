@@ -1,4 +1,19 @@
 .users-list {
     width: 100%;
     max-width: 50%;
+    margin: 1rem auto;
+}
+
+.users-list ul {
+    padding: 0;
+}
+
+.users-list li {
+    padding: 1rem;
+    border: 2px solid;
+    margin-bottom: 1rem;
+}
+
+.users-list__pagination-button {
+    margin-right: 6px;
 }
